@@ -334,16 +334,44 @@
             }
 
             .popup {
-                width: 95%; /* Smaller width for mobile */
-                padding: 15px; /* Adjust padding for smaller screens */
+                width: 85%; /* Smaller width for mobile */
+                padding: 10px; /* Adjust padding for smaller screens */
             }
 
             .popup h2 {
-                font-size: 18px; /* Smaller title size */
+                font-size: 16px; /* Smaller title size */
             }
 
             .popup ul li input[type="text"] {
                 font-size: 12px; /* Smaller input text size */
+            }
+
+            .popup .add-btn, .popup .save-btn, .popup .close-btn {
+                font-size: 14px; /* Smaller button text */
+                padding: 8px 12px; /* Adjust button size */
+            }
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            animation: fade-out 3s forwards;
+        }
+
+        @keyframes fade-out {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(20px);
             }
         }
     </style>
@@ -396,7 +424,8 @@
                 <input type="text" placeholder="Write your goal here..." oninput="updateGoal(this)">
                 <button onclick="deleteGoal(this)"><i class="bi bi-trash"></i></button>
             `;
-            goalsList.appendChild(newGoal); // Add new goals to the bottom
+            goalsList.appendChild(newGoal);
+            showNotification('Goal added successfully!');
         }
 
         function saveGoals() {
@@ -408,12 +437,15 @@
                 goals.push({ text, checked });
             });
             localStorage.setItem('myGoals', JSON.stringify(goals));
+            showNotification('Goals saved successfully!');
         }
 
         function loadGoals() {
             const savedGoals = JSON.parse(localStorage.getItem('myGoals')) || [];
-            goalsList.innerHTML = ''; // Clear the list before loading
+            goalsList.innerHTML = ''; // Clear the popup list before loading
+
             savedGoals.forEach(goal => {
+                // Add goals to the popup modal
                 const newGoal = document.createElement('li');
                 newGoal.innerHTML = `
                     <input type="checkbox" ${goal.checked ? 'checked' : ''} onclick="checkGoal(this)">
@@ -428,6 +460,7 @@
             const goalItem = button.parentElement;
             goalsList.removeChild(goalItem);
             saveGoals(); // Ensure the updated list is saved after deletion
+            showNotification('Goal deleted successfully!');
         }
 
         function checkGoal(checkbox) {
@@ -436,6 +469,17 @@
 
         function updateGoal(input) {
             saveGoals(); // Save changes whenever a goal is edited
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000); // Remove notification after 3 seconds
         }
 
         // Load goals on page load
