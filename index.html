@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Fox</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+        .header {
+            background-color: #1e1e1e; /* Darker header */
+            color: #ffffff; /* White text */
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header .site-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        a {
+            color: #bb86fc; /* Accent color for links */
+        }
+        a:hover {
+            color: #ff79c6; /* Hover effect */
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .header .site-name .bi-cloud {
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .gear-icon {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        .side-icons {
+            position: fixed;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .side-icons .icon {
+            font-size: 24px;
+            color: #ffffff;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .side-icons .icon:hover {
+            transform: scale(1.2) rotate(10deg);
+            color: #bb86fc; /* Accent color on hover */
+        }
+
+        .side-icons .icon:nth-child(1) {
+            margin-top: 20px; /* Slightly higher */
+        }
+
+        .side-icons .icon:nth-child(3) {
+            margin-bottom: 20px; /* Slightly lower */
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%; /* Default width for smaller screens */
+            max-width: 400px; /* Limit width on larger screens */
+            background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+            color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 6px 6px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        @keyframes popupFadeIn {
+            from {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup h2 {
+            margin: 0;
+            font-size: 22px;
+            text-align: center;
+            font-weight: bold;
+            color: #bb86fc;
+        }
+
+        .popup ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .popup ul li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .popup ul li input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #bb86fc; /* Purple border */
+            border-radius: 4px;
+            background-color: #2a2a2a;
+            cursor: pointer;
+            position: relative;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .popup ul li input[type="checkbox"]:checked {
+            background-color: #bb86fc;
+            border-color: #9b6bdb;
+        }
+
+        .popup ul li input[type="checkbox"]:checked::after {
+            content: '\2713';
+            color: #ffffff;
+            font-size: 14px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .popup ul li input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .popup ul li button {
+            background-color: #8b0000; /* Dark clay red */
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .popup ul li button:hover {
+            background-color: #a52a2a; /* Lighter clay red */
+        }
+
+        .popup ul li button i {
+            font-size: 18px; /* Ensure the trash icon is visible */
+        }
+
+        .popup .add-btn {
+            margin-top: 10px;
+            padding: 12px 18px;
+            background: linear-gradient(145deg, #9b6bdb, #bb86fc); /* Purple gradient */
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup .add-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(145deg, #bb86fc, #9b6bdb);
+        }
+
+        .popup .save-btn {
+            margin-top: 15px;
+            padding: 12px 18px;
+            background: linear-gradient(145deg, #1976d2, #2196f3); /* Blue gradient */
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup .save-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(145deg, #2196f3, #1976d2);
+        }
+
+        .popup .close-btn {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: linear-gradient(145deg, #495057, #343a40); /* Dark gray gradient */
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup .close-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(145deg, #343a40, #495057);
+        }
+
+        .achievement-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(145deg, #4caf50, #388e3c);
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 16px;
+            font-weight: bold;
+            animation: slide-in 0.5s ease, fade-out 0.5s ease 2.5s;
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fade-out {
+            to {
+                opacity: 0;
+            }
+        }
+
+        .achievement-message.fade-out {
+            animation: fade-out 0.5s ease forwards;
+        }
+
+        .save-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(145deg, #1976d2, #2196f3);
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 16px;
+            font-weight: bold;
+            animation: slide-in 0.5s ease, fade-out 0.5s ease 2.5s;
+        }
+
+        .save-message.fade-out {
+            animation: fade-out 0.5s ease forwards;
+        }
+
+        .delete-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(145deg, #8b0000, #a52a2a); /* Dark clay red gradient */
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 16px;
+            font-weight: bold;
+            animation: slide-in 0.5s ease, fade-out 0.5s ease 2.5s;
+        }
+
+        .delete-message.fade-out {
+            animation: fade-out 0.5s ease forwards;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .side-icons {
+                left: 5px;
+                gap: 10px;
+            }
+
+            .popup {
+                width: 95%; /* Smaller width for mobile */
+                padding: 15px; /* Adjust padding for smaller screens */
+            }
+
+            .popup h2 {
+                font-size: 18px; /* Smaller title size */
+            }
+
+            .popup ul li input[type="text"] {
+                font-size: 12px; /* Smaller input text size */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="site-name">
+            <i class="bi bi-cloud"></i>
+            Cloud Fox
+        </div>
+    </div>
+    <i class="bi bi-gear gear-icon"></i>
+    <div class="side-icons">
+        <i class="bi bi-list-check icon"></i>
+        <i class="bi bi-sun icon"></i>
+        <i class="bi bi-calendar-date icon"></i>
+    </div>
+
+    <!-- Goals Popup Modal -->
+    <div class="popup" id="goalsPopup">
+        <h2>My Goals</h2>
+        <ul id="goalsList">
+            <li>
+                <input type="checkbox">
+                <input type="text" placeholder="Write your goal here...">
+                <button onclick="deleteGoal(this)">Delete</button>
+            </li>
+        </ul>
+        <button class="add-btn" onclick="addGoal()">+ Add Goal</button>
+        <button class="save-btn" onclick="saveGoals()">Save</button>
+        <button class="close-btn" onclick="togglePopup(false)">Close</button>
+    </div>
+
+    <script>
+        const goalsIcon = document.querySelector('.bi-list-check');
+        const goalsPopup = document.getElementById('goalsPopup');
+
+        goalsIcon.addEventListener('click', () => togglePopup(true));
+
+        function togglePopup(show) {
+            goalsPopup.style.display = show ? 'flex' : 'none';
+        }
+
+        const goalsList = document.getElementById('goalsList');
+
+        function addGoal() {
+            const newGoal = document.createElement('li');
+            newGoal.innerHTML = `
+                <input type="checkbox" onclick="checkGoal(this)">
+                <input type="text" placeholder="Write your goal here..." oninput="updateGoal(this)">
+                <button onclick="deleteGoal(this)"><i class="bi bi-trash"></i></button>
+            `;
+            goalsList.appendChild(newGoal); // Add new goals to the bottom
+        }
+
+        function saveGoals() {
+            const goals = [];
+            const goalItems = goalsList.querySelectorAll('li');
+            goalItems.forEach(item => {
+                const text = item.querySelector('input[type="text"]').value;
+                const checked = item.querySelector('input[type="checkbox"]').checked;
+                goals.push({ text, checked });
+            });
+            localStorage.setItem('myGoals', JSON.stringify(goals));
+        }
+
+        function loadGoals() {
+            const savedGoals = JSON.parse(localStorage.getItem('myGoals')) || [];
+            goalsList.innerHTML = ''; // Clear the list before loading
+            savedGoals.forEach(goal => {
+                const newGoal = document.createElement('li');
+                newGoal.innerHTML = `
+                    <input type="checkbox" ${goal.checked ? 'checked' : ''} onclick="checkGoal(this)">
+                    <input type="text" value="${goal.text}" oninput="updateGoal(this)">
+                    <button onclick="deleteGoal(this)"><i class="bi bi-trash"></i></button>
+                `;
+                goalsList.appendChild(newGoal);
+            });
+        }
+
+        function deleteGoal(button) {
+            const goalItem = button.parentElement;
+            goalsList.removeChild(goalItem);
+            saveGoals(); // Ensure the updated list is saved after deletion
+        }
+
+        function checkGoal(checkbox) {
+            saveGoals(); // Save changes whenever a goal is checked
+        }
+
+        function updateGoal(input) {
+            saveGoals(); // Save changes whenever a goal is edited
+        }
+
+        // Load goals on page load
+        document.addEventListener('DOMContentLoaded', loadGoals);
+    </script>
+</body>
+</html>
